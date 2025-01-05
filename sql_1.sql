@@ -1,0 +1,582 @@
+--*!SECTION USE MyCompany 
+-- * Retrieve the names of all employees in department 10 who work more than or equal 10 hours per week on the "AL Rabwah" project.
+-- SELECT e.Fname+' '+e.Lname AS Name
+-- FROM Employee e, Project p, Works_for w
+-- WHERE p.Pnumber=w.Pno and e.SSN = w.ESSn
+-- and e.Dno=10 and p.Pname='AL Rabwah' and w.Hours>=10
+--* Find the names of the employees who were
+--  directly supervised by Kamel Mohamed.
+-- SELECT e.Fname+' '+e.Lname AS Name
+-- FROM Employee e, Employee s
+-- WHERE e.Superssn=s.SSN and s.Fname='Kamel' and s.Lname='Mohamed'
+--* Retrieve the names of all employees and the names of
+--the projects they are working on, sorted by the project name.
+-- SELECT E.Fname+' '+E.Lname AS Name, P.Pname
+-- FROM Employee E,Project P, Works_for W
+-- WHERE E.SSN=W.ESSn and P.Pnumber=W.Pno
+-- ORDER BY P.Pname
+--* 7.	For each project located in Cairo City , find the project number
+--* ,the controlling department name ,the department manager last name ,address and birthdate.
+-- SELECT P.Pnumber,P.City,D.Dname,E.Lname,E.Address,E.Bdate
+-- FROM Employee E, Project P,Departments D
+-- WHERE P.Dnum=D.Dnum and D.MGRSSN=E.SSN AND P.City='Cairo'
+--* 8.	Display All Data of the managers
+-- SELECT E.*
+-- FROM Employee E, Departments D
+-- WHERE E.SSN=D.MGRSSN
+--* Display All Employees data and the data of their dependents
+--even if they have no dependents
+-- SELECT E.Fname+' '+ E.Lname AS EmployeesName,E.Bdate AS EmployeesDate,D.Bdate AS  DependentBdate
+-- FROM Employee E LEFT JOIN Dependent D
+-- ON E.SSN=D.ESSN
+--	Display all the projects names, locations and the department which is responsible for it.
+-- SELECT P.Pname,P.Plocation,D.Dname
+-- FROM Project P,Departments D
+-- WHERE P.Dnum=D.Dnum
+--*!SECTION USE ITI 
+--* Display instructor Name and Department Name 
+--Note: display all the instructors if they are attached to a department or not
+-- SELECT  I.Ins_Name AS InstructorName,D.Dept_Name AS DepartmentName
+-- FROM Instructor I LEFT JOIN Department D
+-- ON I.Dept_Id=D.Dept_Id
+--* Select Supervisor first name and the count
+--of students who supervises on them
+-- SELECT SUPR.St_Fname,COUNT(S.St_Id) AS StudentCount
+-- FROM Student S , Student SUPR
+-- WHERE S.St_super=SUPR.St_Id
+-- GROUP BY SUPR.St_Fname
+--* Display number of courses for each topic name
+-- SELECT T.Top_Name AS TopicName,COUNT(C.Crs_Id) AS CourseCount
+-- FROM Course C, Topic T
+-- WHERE C.Top_Id=T.Top_Id
+-- GROUP BY T.Top_Name
+--* Display max and min salary for instructors
+-- SELECT MAX(Salary) AS MaxSalary,MIN(Salary) AS MinSalary
+-- FROM Instructor 
+--*  Select Average Salary for instructors
+-- SELECT AVG(Salary) AS AverageSalary
+-- FROM Instructor
+--* Display student full name and the name of the course he 
+-- is taking For only courses which have a grade  
+-- SELECT S.St_Fname + ' ' + S.St_Lname AS StudentName,
+--     C.Crs_Name AS CourseName ,
+--     SC.Grade AS Grade
+-- FROM Student S,
+--     Course C,
+--     Stud_Course SC
+-- WHERE S.St_Id = SC.St_Id
+--     AND C.Crs_Id = SC.Crs_Id
+--     AND SC.Grade IS NOT NULL
+--* 1.	For each project, list the project name and the total hours per week
+--(for all employees) spent on that project.
+-- USE MyCompany
+-- SELECT
+--     P.Pname AS ProjectName,
+--     SUM(W.[Hours]) AS TotalHours
+-- FROM
+--     Project P,
+--     Works_for W
+-- WHERE
+--     P.Pnumber = W.Pno
+-- GROUP BY
+--     P.Pname
+--*2.	For each department, retrieve the department name
+--and the maximum,minimum and average salary of its employees.
+-- SELECT
+--     D.Dname AS DepartmentName,
+--     MAX(E.Salary) AS MaxSalary,
+--     MIN(E.Salary) AS MinSalary,
+--     AVG(E.Salary) AS AvgSalary
+-- FROM
+--     Departments D,
+--     Employee E
+-- WHERE D.Dnum=E.Dno
+-- GROUP BY D.Dname
+--*3 Retrieve a list of employees and the projects
+--they are working on ordered by department and within
+--each department, ordered alphabetically by last name, first name.
+-- SELECT
+--     E.*,
+--     P.*
+-- FROM
+--     Project P,
+--     Employee E,
+--     Works_for W
+-- WHERE
+--     P.Pnumber = W.Pno
+--     and E.SSN = W.ESSn
+-- ORDER BY
+--     E.Dno,
+--     E.Lname,
+--     E.Fname
+--* 4.	Try to update all salaries of employees who work in Project ‘Al Rabwah’ by 30% 
+-- UPDATE Employee
+-- SET Salary = Salary * 1.3
+-- FROM Employee E, Project P, Works_for W
+-- WHERE E.SSN = W.ESSn AND P.Pnumber = W.Pno AND P.Pname = 'AL Rabwah'
+--* 1.	In the department table insert a new department called "DEPT IT"
+--, with id 100, employee with SSN = 112233 as a manager for this department.
+--The start date for this manager is '1-11-2006'
+-- INSERT INTO Departments (Dnum, Dname, MGRSSN, MGRStartDate)
+-- VALUES (100, 'DEPT IT', 112233, '1-11-2006')
+-- * 2.	Do what is required if you know that : Mrs.Noha Mohamed(SSN=968574)  moved to be the manager of the new department (id = 100), and they give you(your SSN =102672) her position (Dept. 20 manager)
+--^a.	First try to update her record in the department table
+-- UPDATE Departments
+-- SET MGRSSN = 968574
+-- WHERE Dnum = 100
+--b.	Update your record to be department 20 manager.
+-- UPDATE Departments
+-- SET MGRSSN = 102672
+-- WHERE Dnum = 20
+--c.	Update the data of employee number=102660 to be in your teamwork
+--(he will be supervised by you) (your SSN =102672)
+-- UPDATE Departments
+-- SET MGRSSN = 102672
+-- WHERE Dnum = 20;
+--*3. Unfortunately the company ended the contract with Mr. Kamel Mohamed (SSN=223344) so try to delete his data from your database in case you know that you will be temporarily in his position.
+--Hint: (Check if Mr. Kamel has dependents, works as a department manager, supervises any employees or works in any projects and handles these cases).
+-- -- الخطوة 1: حذف المعالين
+-- DELETE FROM Dependent
+-- WHERE ESSN = 223344;
+-- -- الخطوة 2: تحديث مدير القسم
+-- UPDATE Departments
+-- SET MGRSSN = 102672  -- SSN الخاص بك
+-- WHERE MGRSSN = 223344;
+-- -- الخطوة 3: تحديث إشراف الموظفين
+-- UPDATE Employee
+-- SET Superssn = 102672  -- SSN الخاص بك
+-- WHERE Superssn = 223344;
+-- -- الخطوة 4: حذف العمل على المشاريع
+-- DELETE FROM Works_for
+-- WHERE ESSn = 223344;
+-- -- الخطوة 5: حذف بيانات الموظف
+-- DELETE FROM Employee
+-- WHERE SSN = 223344;
+-- SELECT D.Dept_Id AS DepartmentName
+-- FROM Student S, Department D
+-- WHERE S.St_Id=D.Dept_Id
+-- SELECT TOP(2)*
+-- FROM Student 
+-- ORDER BY St_Age DESC
+--SECTIONSECTION
+-- ^ Display the full name of students along with their year of enrollment formatted as:
+-- Full Name (Year of Enrollment)
+-- Use the Concat or Format function.
+-- SELECT St_Fname+' '+St_Lname AS FullName,St_Age
+-- FROM Student
+-- USE ITI
+-- SELECT 
+--     St_Fname + ' ' + St_Lname + ' (' + CAST(St_Age AS NVARCHAR) + ')' AS StudentInfo
+-- FROM Student
+-- SELECT FORMAT(St_Fname + ' ' + St_Lname + ' ' + CAST(St_Age AS int), '0') AS FullDetails
+-- FROM Student;
+-- SELECT  St_Fname, Dept_Id,COALESCE(CAST(Dept_Id AS NVARCHAR), 'itIsNull') AS Dept_Id
+-- FROM Student
+-- SELECT  St_Fname, Dept_Id,ISNULL(Dept_Id, 0) AS Dept_Id
+-- FROM Student
+-- SELECT  
+--     St_Fname, 
+--     Dept_Id AS Original_Dept_Id, 
+--     CASE 
+--         WHEN ISNULL(Dept_Id, 0) = 0 THEN 'itIsNull'
+--         ELSE CAST(Dept_Id AS NVARCHAR)
+--     END AS Dept_Id
+-- FROM Student;
+-- SELECT CONCAT(LEFT(S.St_Fname,3),' => ',D.Dept_Name)
+-- FROM Student S,Department D
+-- WHERE S.Dept_Id=D.Dept_Id
+-- SELECT FORMAT(GETDATE()
+-- ,'yyyy-MM-dd')
+--^Retrieve a list of instructors where the hire date is in the current year.
+--Use a DATETIME function.
+--^Write a query to calculate the average salary for instructors in each 
+--department and format it to two decimal places using CAST or FORMAT.
+-- SELECT D.Dept_Name,FORMAT(AVG(I.Salary),'0.00')
+-- FROM Instructor I,Department D
+-- WHERE I.Dept_Id=D.Dept_Id
+-- GROUP BY D.Dept_Name
+--^Select instructors whose salary is MORE the average salary of all instructors. Use a subquery.
+-- SELECT AVG(Salary)
+-- FROM Instructor
+-- SELECT I.Ins_Name,I.Salary
+-- FROM Instructor I
+-- WHERE I.Salary>(SELECT AVG(Salary) FROM Instructor)
+-- SELECT S.St_Fname , COALESCE(D.Dept_Name,'General Studies')
+-- FROM Student S,Department D
+-- WHERE S.Dept_Id=D.Dept_Id
+-- SELECT S.St_Fname,
+-- COALESCE(D.Dept_Name, 'General Studies')
+-- AS Department
+-- FROM Student S
+-- LEFT JOIN Department D ON S.Dept_Id = D.Dept_Id;
+-- IT IS TRUE ?
+--^List the top 5 students with the highest Age
+--in descending order using the TOP clause.
+-- SELECT TOP(5) St_Fname,St_Age
+-- FROM Student
+-- ORDER BY St_Age DESC
+-- IT IS TRUE ?
+-- SELECT CONCAT(I.Ins_Name,'-',D.Dept_Name)
+-- FROM Instructor I,Department D
+-- WHERE I.Dept_Id=D.Dept_Id
+--^ Select the instructor with the third highest salary in each department
+--using a ranking function (ROW_NUMBER, RANK, or DENSE_RANK).
+-- SELECT 
+-- FROM Instructor I , Department D
+-- WHERE I.Dept_Id=D.Dept_Id
+-- USE MyCompany
+--^1.	Display the data of the department which has
+--the smallest employee ID over all employees' ID.
+-- SELECT D.*
+-- FROM Departments D
+-- JOIN Employee E ON E.Dno = D.Dnum
+-- WHERE E.SSN = (SELECT MIN(SSN) FROM Employee);
+-- SELECT MIN(SSN)
+-- FROM Employee
+-- SELECT D.*
+-- FROM Departments D,Employee E
+-- WHERE D.Dnum=E.Dno AND E.SSN=(SELECT MIN(SSN) FROM Employee)
+--&2.	2.	For each department-- if its average salary is less than the average 
+--salary of all employees-- display its number, name and number of its employees.
+-- SELECT D.Dnum, D.Dname, COUNT(E.SSN) AS NumberOfEmployees
+-- FROM Departments D
+-- JOIN Employee E ON D.Dnum = E.Dno
+-- GROUP BY D.Dnum, D.Dname
+-- HAVING AVG(E.Salary) < (SELECT AVG(Salary) FROM Employee);
+-- SELECT @@SERVERNAME
+-- USE MyCompany
+-- CREATE FUNCTION GetDepManagerByDeptName(@DeptName VARCHAR(20))
+-- RETURNS VARCHAR(25)
+-- BEGIN
+-- DECLARE  @DepManger VARCHAR(25)
+-- SELECT @DepManger = E.Fname
+-- FROM Departments D, Employee E
+-- WHERE D.Dname = @DeptName AND D.MGRSSN = E.SSN
+-- RETURN @DepManger
+-- END
+-- SELECT GetDepManagerByDeptName('Dp2')
+-- USE MyCompany;
+-- GO
+-- CREATE FUNCTION GetDepManagerByDeptName(@DeptName VARCHAR(20))
+-- RETURNS VARCHAR(25)
+-- BEGIN
+--     DECLARE @DepManger VARCHAR(25);
+--     SELECT @DepManger = E.Fname
+--     FROM Departments D, Employee E
+--     WHERE D.Dname = @DeptName AND D.MGRSSN = E.SSN;
+--     RETURN @DepManger;
+-- END;
+-- GO
+-- SELECT dbo.GetDepManagerByDeptName('Dp2');
+-- USE adventureworks2012
+--1.Display the SalesOrderID, ShipDate of the SalesOrderHearder table (Sales schema) 
+--to designate SalesOrders that occurred within the period ‘7/28/2002’ and ‘7/29/2014’
+-- SELECT SalesOrderID, ShipDate
+-- FROM Sales.SalesOrderHeader
+-- WHERE ShipDate BETWEEN '2002-07-28' AND '2014-07-29';
+-- SELECT SalesOrderID, ShipDate
+-- FROM Sales.SalesOrderHeader
+-- WHERE OrderDate BETWEEN '2002-07-28' AND '2014-07-29'
+--^Display only Products(Production schema) with a StandardCost below $110.00 (show ProductID, Name only)
+-- SELECT ProductID, Name
+-- FROM Production.Product
+-- WHERE StandardCost < 110.00
+--^Display ProductID, Name if its weight is unknown
+-- SELECT ProductID, Name
+-- FROM Production.Product
+-- WHERE Weight IS NULL
+--^Display all Products with a Silver, Black, or Red Color
+-- SELECT ProductID, Name, Color
+-- FROM Production.Product
+-- WHERE Color = 'Silver' OR Color = 'Black' OR Color = 'Red'
+-- & it is correct or not ؟ 
+--^Display any Product with a Name starting with the letter B
+-- SELECT ProductID, Name
+-- FROM Production.Product
+-- WHERE Name LIKE 'B%'
+--^ Display the Employees HireDate (note no repeated values are allowed)
+-- SELECT DISTINCT HireDate
+-- FROM HR.Employee
+--^ 9.	Display the Product Name and its ListPrice within the values of 100 and 120
+--the list should have the following format "The [product name] is only! [List price]"
+--(the list will be sorted according to its ListPrice value)
+-- SELECT 
+--     CONCAT('The ', Name, ' is only! ', ListPrice) AS ProductInfo
+-- FROM Production.Product
+-- WHERE ListPrice BETWEEN 100 AND 120
+-- ORDER BY ListPrice ASC;
+ -- CREATE FUNCTION GetStudentNameByStudentId (@stId INT)
+-- RETURNS VARCHAR(20)
+-- AS
+-- BEGIN
+-- DECLARE @StudentName VARCHAR(20)
+-- SELECT @StudentName = St_Fname + '  ' + St_Lname
+-- FROM Student
+-- WHERE St_Id = @stId
+-- RETURN @StudentName
+-- END
+--*REVIEW - 
+-- CREAETE FUNCTION GetStudentNameByStudentId(@StId)
+-- RETURN VARCHAR(20) 
+-- BEGIN
+-- DECLARE @StudentName VARCHAR(20)  
+-- SELECT @StudentName = St_Fname + ' ' + St_Lname
+-- FROM Student
+-- WHERE St_Id = @StId
+-- RETURN @StudentName
+-- END
+--*
+-- CREATE FUNCTION GetInstructorNameByDepartmentName(@DepatmentName VARCHAR(20))
+-- RETURNS VARCHAR(20)  
+-- BEGIN
+-- DECLARE @InstructorName VARCHAR(20)  
+-- SELECT @InstructorName = I.Ins_Name
+-- FROM Instructor I, Department D
+-- WHERE I.Ins_Id = D.Dept_Manager AND D.Dept_Name = @DepatmentName
+-- RETURN @InstructorName
+-- END
+-- SELECT dbo.GetInstructorNameByDepartmentName('Java') AS InstructorName
+
+--&--------------------
+
+-- CREATE FUNCTION GetInsNameByDeptID(@DeptID INT) RETURNS TABLE AS RETURN (
+--     SELECT Ins_Name, Dept_Id
+--     FROM Instructor
+--     WHERE Dept_Id = @DeptID
+-- );
+-- SELECT *
+-- FROM dbo.GetInsNameByDeptID(10);
+
+--^ Create a scalar function that takes a date and returns the Month name of that date.
+
+-- CREATE FUNCTION GetMonthNameByDate(@Date DATE) RETURNS VARCHAR(10) AS BEGIN
+--     DECLARE @MonthName VARCHAR(10)
+--     SELECT @MonthName = DATENAME(MONTH, @Date)
+--     RETURN @MonthName 
+--     END
+
+--     SELECT dbo.GetMonthNameByDate('2022-05-15') AS MonthName
+
+--^2.Create a multi-statements table-valued function that takes 2 integers and returns the values between them.
+
+-- CREATE FUNCTION GetValuesBetween(@Start INT, @End INT) RETURNS TABLE AS RETURN (
+--     SELECT Value
+--     FROM master..spt_values
+--     WHERE type = 'P' AND number BETWEEN @Start AND @End
+-- );
+
+
+
+--&--------------------
+-- -- select into
+-- SELECT * INTO newEmployees
+-- FROM MyCompany.dbo.Employee
+
+-- -- insrt based on select
+-- INSERT into newEmployees
+-- select * from MyCompany.dbo.Project
+--&--------------------
+--^2.Create a multi-statements table-valued function that takes 2 integers and returns the values between them.
+
+-- CREATE FUNCTION GetInstructorNameByDepartmentName(@DepatmentName VARCHAR(20))
+-- RETURNS VARCHAR(20)  
+-- BEGIN
+-- DECLARE @InstructorName VARCHAR(20)  
+-- SELECT @InstructorName = I.Ins_Name
+-- FROM Instructor I, Department D
+-- WHERE I.Ins_Id = D.Dept_Manager AND D.Dept_Name = @DepatmentName
+-- RETURN @InstructorName
+-- END
+-- SELECT dbo.GetInstructorNameByDepartmentName('Java') AS InstructorName
+--*
+-- CREATE FUNCTION GetValuesBetween(@Start INT, @End INT)
+-- RETURNS @newTable TABLE (ValueBtw INT)
+-- AS BEGIN
+-- WHILE (@Start<@End-1)
+-- BEGIN
+-- SET @Start += 1
+-- INSERT INTO @newTable VALUES (@Start)
+-- END
+-- RETURN
+-- END
+
+-- SELECT * FROM dbo.GetValuesBetween(5, 10)
+-- USE ITI
+
+--^Create a table-valued function that takes Student No and returns Department Name with Student full name.
+
+-- CREATE FUNCTION GetDepartmentNameByStudentID(@StudentID INT)
+-- RETURNS @Table
+-- TABLE (fallName vaRCHAR(20), Dept_Name VARCHAR(20))
+-- AS
+-- BEGIN
+-- INSERT INTO @Table
+-- SELECT S.St_Fname + ' ' + S.St_Lname AS FullName, D.Dept_Name
+-- FROM Student S, Department D
+-- WHERE S.Dept_Id = D.Dept_Id AND S.St_Id = @StudentID
+-- RETURN
+-- END
+
+-- SELECT * FROM dbo.GetDepartmentNameByStudentID(10)
+
+--^Create a scalar function that takes Student ID and returns a message to user 
+--If first name and Last name are null then display 'First name & last name are null'
+--If First name is null then display 'first name is null'
+--If Last name is null then display 'last name is null'
+--Else display 'First name & last name are not null'
+
+-- CREATE FUNCTION dbo.GetStudentNameStatus
+-- (
+--     @StudentID INT
+-- )
+-- RETURNS NVARCHAR(100)
+-- AS
+-- BEGIN
+--     DECLARE @Message NVARCHAR(100);
+
+--     SELECT 
+--         @Message = CASE 
+--                       WHEN FirstName IS NULL AND LastName IS NULL THEN 'First name & last name are null'
+--                       WHEN FirstName IS NULL THEN 'First name is null'
+--                       WHEN LastName IS NULL THEN 'Last name is null'
+--                       ELSE 'First name & last name are not null'
+--                    END
+--     FROM Students
+--     WHERE StudentID = @StudentID;
+
+--     -- Handle case where StudentID does not exist
+--     IF @Message IS NULL
+--         SET @Message = 'Student not found';
+
+--     RETURN @Message;
+-- END;
+-- GO
+
+--^Create a function that takes an integer which represents the format of
+--the Manager hiring date and displays department name, Manager Name and hiring date with this format.   
+
+-- CREATE FUNCTION GetInstructorNameByDepartmentName
+--     (
+--     @Format INT
+--     )
+--     RETURNS @Table
+--     TABLE (
+--         dept_Name VARCHAR(50),
+--         manager_Name VARCHAR(50),
+--         HireDate VARCHAR(50)
+--         )
+--     AS
+--     BEGIN
+--     INSERT INTO @Table
+--     SELECT  D.Dept_Name,I.Ins_Name,
+--     CONVERT(VARCHAR, D.Manager_HireDate , @Format)
+--     FROM Instructor I, Department D
+--     WHERE I.Dept_Id = D.Dept_Id
+--     RETURN
+--     END
+
+--     SELECT * FROM dbo.GetInstructorNameByDepartmentName(101)
+
+--*
+--^ 6.	Create multi-statement table-valued function that takes a string
+--If string='first name' returns student first name
+--If string='last name' returns student last name 
+--If string='full name' returns Full Name from student table  
+--Use “ISNULL” function
+
+-- THIS SOLOTION IS CORRECT :
+-- CREATE FUNCTION GetStudentName(@str VARCHAR(20))
+-- RETURNS @Table TABLE 
+-- (
+--     StrName VARCHAR(50)
+-- )
+-- AS
+-- BEGIN
+--     -- Validate input to ensure it matches expected values
+--     IF @str NOT IN ('first name', 'last name', 'full name')
+--     BEGIN
+--         RETURN;
+--     END;
+
+--     -- Insert appropriate results based on input
+--     INSERT INTO @Table
+--     SELECT 
+--         CASE
+--             WHEN @str = 'first name' THEN ISNULL(St_Fname, 'N/A')
+--             WHEN @str = 'last name' THEN ISNULL(St_Lname, 'N/A')
+--             WHEN @str = 'full name' THEN ISNULL(St_Fname, 'N/A') + ' ' + ISNULL(St_Lname, 'N/A')
+--         END AS StrName
+--     FROM Student;
+    
+--     RETURN;
+-- END;
+
+-- USE MyCompany
+--^Create function that takes project number and display all employees in this project (Use MyCompany DB)
+
+-- CREATE FUNCTION DisplayEmployeeSInProjectByProjectNum(@ProjectNum INT)
+-- RETURNS @Table TABLE 
+-- (
+--     AllEmployees VARCHAR(50)
+-- )
+-- AS
+-- BEGIN
+-- INSERT INTO @Table
+-- SELECT ISNULL(E.Fname, 'Unknown')
+-- FROM Employee E, Works_for W
+-- WHERE E.SSN=W.ESSn AND W.Pno=@ProjectNum
+-- RETURN
+-- END
+--*
+-- CREATE FUNCTION DisplayEmployeesInProjectByProjectNum(@ProjectNum INT)
+-- RETURNS @Table TABLE 
+-- (
+--     EmployeeName VARCHAR(50)
+-- )
+-- AS
+-- BEGIN
+--     -- Insert query results into the table variable
+--     INSERT INTO @Table
+--     SELECT 
+--         ISNULL(E.Name, 'Unknown') AS EmployeeName
+--     FROM Employee E
+--     INNER JOIN Works_for W ON E.SSN = W.ESSn
+--     WHERE W.Pno = @ProjectNum;
+
+--     -- Return the result table
+--     RETURN;
+-- END;
+--*
+-- CREATE FUNCTION DisplayEmployeesInProjectByProjectNum3(@ProjectNum INT)
+-- RETURNS @Table TABLE 
+-- (
+--     AllEmployees VARCHAR(50)
+-- )
+-- AS
+-- BEGIN
+--     IF EXISTS (SELECT 1 FROM Works_for WHERE Pno = @ProjectNum)
+--     BEGIN
+--         -- Insert actual employee data into the table
+--         INSERT INTO @Table
+--         SELECT 
+--             ISNULL(E.Fname, 'Unknown') AS AllEmployees
+--         FROM Employee E
+--         INNER JOIN Works_for W ON E.SSN = W.ESSn
+--         WHERE W.Pno = @ProjectNum;
+--     END
+--     ELSE
+--     BEGIN
+--         -- Insert a placeholder message into the table
+--         INSERT INTO @Table
+--         VALUES ('The specified project number does not exist.');
+--     END
+
+--     -- Return the result table
+--     RETURN;
+-- END;
+-- SELECT * FROM dbo.DisplayEmployeeSInProjectByProjectNum3(2)
+--*
+--^1.	 Create a view that displays the student's full name,
+--course name if the student has a grade more than 50. 
+-- REVIEW ON SQL
+
